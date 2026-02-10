@@ -1,4 +1,4 @@
-package ru.praktikum.qa_scooter;
+package ru.praktikum.qa_scooter.data;
 
 // Класс для логина курьером
 public class Login {

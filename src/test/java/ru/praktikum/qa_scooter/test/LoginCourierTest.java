@@ -1,4 +1,4 @@
-package ru.praktikum.qa_scooter;
+package ru.praktikum.qa_scooter.test;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -8,6 +8,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.praktikum.qa_scooter.base.BaseTest;
 import ru.praktikum.qa_scooter.config.Config;
+import ru.praktikum.qa_scooter.data.Courier;
+import ru.praktikum.qa_scooter.data.Login;
 import ru.praktikum.qa_scooter.utils.CourierUtils;
 import ru.praktikum.qa_scooter.utils.ResponseSteps;
 

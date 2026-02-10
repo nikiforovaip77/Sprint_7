@@ -3,8 +3,8 @@ package ru.praktikum.qa_scooter.utils;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import ru.praktikum.qa_scooter.Courier;
-import ru.praktikum.qa_scooter.Login;
+import ru.praktikum.qa_scooter.data.Courier;
+import ru.praktikum.qa_scooter.data.Login;
 import ru.praktikum.qa_scooter.config.Config;
 
 import java.util.UUID;

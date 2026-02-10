@@ -1,4 +1,4 @@
-package ru.praktikum.qa_scooter;
+package ru.praktikum.qa_scooter.test;
 
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;

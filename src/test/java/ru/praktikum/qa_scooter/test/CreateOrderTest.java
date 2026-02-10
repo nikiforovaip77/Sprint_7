@@ -1,4 +1,4 @@
-package ru.praktikum.qa_scooter;
+package ru.praktikum.qa_scooter.test;
 
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.praktikum.qa_scooter.base.BaseTest;
 import ru.praktikum.qa_scooter.config.Config;
+import ru.praktikum.qa_scooter.data.Order;
 import ru.praktikum.qa_scooter.utils.ResponseSteps;
 
 import java.util.List;
