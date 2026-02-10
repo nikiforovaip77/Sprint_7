@@ -1,34 +1,22 @@
 package ru.praktikum.qa_scooter.test;
 
-import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.praktikum.qa_scooter.api.OrderApi;
 import ru.praktikum.qa_scooter.base.BaseTest;
-import ru.praktikum.qa_scooter.config.Config;
 import ru.praktikum.qa_scooter.data.Order;
 import ru.praktikum.qa_scooter.utils.ResponseSteps;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.notNullValue;
 
 @DisplayName("Тесты создания заказа")
 public class CreateOrderTest extends BaseTest {
-
-    @Step("Создание заказа")
-    private Response createOrder(Order order) {
-        return given()
-                .contentType("application/json")
-                .body(order)
-                .post(Config.ORDERS_ENDPOINT);
-    }
-
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("colors")
@@ -46,10 +34,11 @@ public class CreateOrderTest extends BaseTest {
                 colors
         );
 
-        Response response = createOrder(order);
+        Response response = OrderApi.createOrder(order);
 
         ResponseSteps.checkStatusCode(response, 201);
-        response.then().body("track", notNullValue());
+        ResponseSteps.checkFieldExists(response,"track");
+
     }
 
     // Тестовые наборы с разными цветами

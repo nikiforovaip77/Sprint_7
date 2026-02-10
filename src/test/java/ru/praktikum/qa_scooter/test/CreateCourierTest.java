@@ -1,72 +1,70 @@
 package ru.praktikum.qa_scooter.test;
 
 import io.qameta.allure.Feature;
-import io.qameta.allure.Step;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.praktikum.qa_scooter.api.CourierApi;
 import ru.praktikum.qa_scooter.base.BaseTest;
-import ru.praktikum.qa_scooter.config.Config;
 import ru.praktikum.qa_scooter.data.Courier;
-import ru.praktikum.qa_scooter.utils.CourierUtils;
+import ru.praktikum.qa_scooter.data.Login;
+import ru.praktikum.qa_scooter.utils.CourierGenerator;
 import ru.praktikum.qa_scooter.utils.ResponseSteps;
 
 import java.util.stream.Stream;
-
-import static io.restassured.RestAssured.given;
 
 @Feature("Создание курьера")
 @DisplayName("Тесты создания курьера")
 public class CreateCourierTest extends BaseTest {
 
     private Courier courier;
-
-    @Step("Создание курьера")
-    private Response createCourier(Courier courier) {
-        return given()
-                .contentType(ContentType.JSON)
-                .body(courier)
-                .post(Config.COURIER_ENDPOINT);
-    }
+    private Integer courierId;
 
     @Test
     @DisplayName("Успешное создание курьера")
     void shouldCreateCourier() {
-        courier = CourierUtils.generateCourier("1234", "Test");
-
-        Response response = createCourier(courier);
+        courier = CourierGenerator.generateCourier("1234", "Test");
+        Response response = CourierApi.createCourier(courier);
 
         ResponseSteps.checkStatusCode(response, 201);
         ResponseSteps.checkBody(response, "ok", true);
+
+        // Получаем id курьера для удаления
+        Response loginResponse = CourierApi.loginCourier(
+                new Login(courier.getLogin(), courier.getPassword())
+        );
+        if (loginResponse.statusCode() == 200) {
+            courierId = loginResponse.jsonPath().getInt("id");
+        }
     }
 
     @Test
     @DisplayName("Ошибка при создании курьера с существующим логином")
     void shouldNotCreateDuplicateCourier() {
-        courier = CourierUtils.generateCourier("1234", "Test");
-
-        createCourier(courier);
-        Response response = createCourier(courier);
+        courier = CourierGenerator.generateCourier("1234", "Test");
+        CourierApi.createCourier(courier);
+        Response response = CourierApi.createCourier(courier);
 
         ResponseSteps.checkStatusCode(response, 409);
         ResponseSteps.checkBody(response, "message", "Этот логин уже используется");
+
+        // Получаем id для удаления
+        Response loginResponse = CourierApi.loginCourier(new Login(courier.getLogin(), courier.getPassword()));
+        if (loginResponse.statusCode() == 200) {
+            courierId = loginResponse.jsonPath().getInt("id");
+        }
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("invalidCouriers")
     @DisplayName("Ошибка при создании курьера ")
     void shouldReturnErrorIfRequiredFieldMissing(Courier courier) {
-        Response response = createCourier(courier);
+        Response response = CourierApi.createCourier(courier);
 
         ResponseSteps.checkStatusCode(response, 400);
-        ResponseSteps.checkBody(
-                response,
-                "message",
-                "Недостаточно данных для создания учетной записи"
-        );
+        ResponseSteps.checkBody(response, "message", "Недостаточно данных для создания учетной записи");
     }
 
     static Stream<Arguments> invalidCouriers() {
@@ -82,14 +80,10 @@ public class CreateCourierTest extends BaseTest {
 
     @AfterEach
     void tearDown() {
-        if (courier != null) {
-            Response loginResponse =
-                    CourierUtils.loginCourier(courier.getLogin(), courier.getPassword());
-
-            if (loginResponse.statusCode() == 200) {
-                int id = loginResponse.jsonPath().getInt("id");
-                CourierUtils.deleteCourier(id);
-            }
+        if (courierId != null) {
+            CourierApi.deleteCourier(courierId);
+            courierId = null;
         }
     }
+
 }

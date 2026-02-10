@@ -22,6 +22,7 @@
 
         <maven.compiler.plugin>3.11.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.2.5</maven.surefire.plugin>
+        <lombok.version>1.18.42</lombok.version>
     </properties>
 
     <dependencies>
@@ -72,6 +73,14 @@
             <version>${aspectj.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Lombok for Maven -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -84,9 +93,15 @@
                 <configuration>
                     <release>${java.version}</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
             <!-- Surefire + AspectJ для Allure -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

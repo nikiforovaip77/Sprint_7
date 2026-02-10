@@ -22,4 +22,5 @@ public class ResponseSteps {
     public static void checkFieldExists(Response response, String path) {
         response.then().body(path, notNullValue());
     }
+
 }

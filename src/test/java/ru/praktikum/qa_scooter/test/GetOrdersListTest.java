@@ -2,40 +2,25 @@ package ru.praktikum.qa_scooter.test;
 
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.praktikum.qa_scooter.config.Config;
+import ru.praktikum.qa_scooter.api.OrderApi;
+import ru.praktikum.qa_scooter.base.BaseTest;
 import ru.praktikum.qa_scooter.utils.ResponseSteps;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.notNullValue;
 
 @Feature("Получение списка заказов")
 @DisplayName("Тесты получения списка заказов")
-public class GetOrdersListTest {
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.baseURI = Config.BASE_URL;
-    }
-
+public class GetOrdersListTest extends BaseTest {
 
     @Test
     @DisplayName("Получение списка заказов")
+    @Step("Получение списка заказов")
     void shouldReturnOrdersList() {
-        Response response = getOrders();
+        Response response = OrderApi.getOrders();
 
         ResponseSteps.checkStatusCode(response, 200);
-
-        response.then().body("orders", notNullValue());
+        ResponseSteps.checkFieldExists(response,"orders");
     }
 
-    @Step("Получение списка заказов")
-    private Response getOrders() {
-        return given()
-                .get(Config.ORDERS_ENDPOINT);
-    }
 }
